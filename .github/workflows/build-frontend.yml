@@ -1,0 +1,30 @@
+name: Build Open-WebUI Frontend
+
+on:
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Using Node.js 20.x
+
+      - name: Install dependencies
+        # Increase max_old_space_size just in case, for GitHub Actions runners
+        run: NODE_OPTIONS=--max_old_space_size=4096 npm install
+
+      - name: Build frontend
+        # Increase max_old_space_size just in case
+        run: NODE_OPTIONS=--max_old_space_size=4096 npm run build
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-webui-build # Name of the downloadable artifact
+          path: build/          # Path to the directory to archive
